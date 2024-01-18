@@ -1,12 +1,12 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Logging;
 using Sprout.Exam.Business.DataTransferObjects;
 using Sprout.Exam.Common.Enums;
+using Sprout.Exam.WebApp.Models;
+using Sprout.Exam.WebApp.Services;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Sprout.Exam.WebApp.Controllers
 {
@@ -15,6 +15,16 @@ namespace Sprout.Exam.WebApp.Controllers
     [ApiController]
     public class EmployeesController : ControllerBase
     {
+        private readonly EmployeeService _service;
+        private readonly ILogger<EmployeesController> _logger;
+
+
+        public EmployeesController(EmployeeService service,
+       ILogger<EmployeesController> logger)
+        {
+            _service = service;
+            _logger = logger;
+        }
 
         /// <summary>
         /// Refactor this method to go through proper layers and fetch from the DB.
@@ -23,8 +33,11 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpGet]
         public async Task<IActionResult> Get()
         {
-            var result = await Task.FromResult(StaticEmployees.ResultList);
-            return Ok(result);
+            var result = _service.ListEmployeeAsync();
+            await Task.WhenAll(result).ConfigureAwait(false);
+            return Ok(result.Result);
+            //var result = await Task.FromResult(StaticEmployees.ResultList);
+            //return Ok(result);
         }
 
         /// <summary>
@@ -62,7 +75,19 @@ namespace Sprout.Exam.WebApp.Controllers
         public async Task<IActionResult> Post(CreateEmployeeDto input)
         {
 
-           var id = await Task.FromResult(StaticEmployees.ResultList.Max(m => m.Id) + 1);
+            var id = await Task.FromResult(StaticEmployees.ResultList.Max(m => m.Id) + 1);
+            var inputEmployee = new Employee
+            {
+                Birthdate = input.Birthdate,
+                EmployeeTypeId = input.TypeId,
+                FullName = input.FullName,
+                Tin = input.Tin,
+                IsDeleted = false,
+            };
+
+            var returnValue = await _service.CreateEmployeeAsync(inputEmployee);
+
+
 
             StaticEmployees.ResultList.Add(new EmployeeDto
             {
@@ -73,7 +98,8 @@ namespace Sprout.Exam.WebApp.Controllers
                 TypeId = input.TypeId
             });
 
-            return Created($"/api/employees/{id}", id);
+            return NotFound();
+            //return Created($"/api/employees/{id}", id);
         }
 
 
@@ -100,12 +126,12 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <param name="workedDays"></param>
         /// <returns></returns>
         [HttpPost("{id}/calculate")]
-        public async Task<IActionResult> Calculate(int id,decimal absentDays,decimal workedDays)
+        public async Task<IActionResult> Calculate(int id, decimal absentDays, decimal workedDays)
         {
             var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == id));
 
             if (result == null) return NotFound();
-            var type = (EmployeeType) result.TypeId;
+            var type = (EmployeeType)result.TypeId;
             return type switch
             {
                 EmployeeType.Regular =>

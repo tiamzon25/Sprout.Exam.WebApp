@@ -1,9 +1,6 @@
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.SpaServices.ReactDevelopmentServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -11,6 +8,8 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
+using Sprout.Exam.WebApp.Repositories;
+using Sprout.Exam.WebApp.Services;
 
 namespace Sprout.Exam.WebApp
 {
@@ -43,6 +42,9 @@ namespace Sprout.Exam.WebApp
 
             services.AddControllersWithViews();
             services.AddRazorPages();
+
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<EmployeeService>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

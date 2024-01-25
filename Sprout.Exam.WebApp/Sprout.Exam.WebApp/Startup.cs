@@ -1,3 +1,4 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
+using Sprout.Exam.WebApp.Models.Mapper;
 using Sprout.Exam.WebApp.Repositories;
 using Sprout.Exam.WebApp.Services;
 
@@ -25,6 +27,14 @@ namespace Sprout.Exam.WebApp
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            var mappingconfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new EmployeeMapper());
+            });
+
+            IMapper mapper = mappingconfig.CreateMapper();
+            services.AddSingleton(mapper);
+
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));

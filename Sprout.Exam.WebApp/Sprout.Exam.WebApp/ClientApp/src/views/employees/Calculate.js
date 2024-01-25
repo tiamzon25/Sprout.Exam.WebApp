@@ -48,11 +48,11 @@ export class EmployeeCalculate extends Component {
 
 <div className="form-row">
 <div className='form-group col-md-12'>
-  <label>Employee Type: <b>{this.state.typeId === 1?"Regular": "Contractual"}</b></label>
+  <label>Employee Type: <b>{this.state.employeeType}</b></label>
 </div>
 </div>
 
-{ this.state.typeId === 1?
+{this.state.employeeTypeId === 1 ?
  <div className="form-row">
      <div className='form-group col-md-12'><label>Salary: 20000 </label></div>
      <div className='form-group col-md-12'><label>Tax: 12% </label></div>
@@ -62,7 +62,7 @@ export class EmployeeCalculate extends Component {
 
 <div className="form-row">
 
-{ this.state.typeId === 1? 
+    {this.state.employeeTypeId === 1? 
 <div className='form-group col-md-6'>
   <label htmlFor='inputAbsentDays4'>Absent Days: </label>
   <input type='text' className='form-control' id='inputAbsentDays4' onChange={this.handleChange.bind(this)} value={this.state.absentDays} name="absentDays" placeholder='Absent Days' />
@@ -100,12 +100,13 @@ export class EmployeeCalculate extends Component {
     const token = await authService.getAccessToken();
     const requestOptions = {
         method: 'POST',
-        headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
-        body: JSON.stringify({id: this.state.id,absentDays: this.state.absentDays,workedDays: this.state.workedDays})
+        headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: this.state.id, absentDays: this.state.absentDays, workedDays: this.state.workedDays, employeeTypeId: this.state.employeeTypeId })
     };
-    const response = await fetch('api/employees/' + this.state.id + '/calculate',requestOptions);
+      //const response = await fetch('api/employees/' + this.state.id + '/calculate', requestOptions);
+      const response = await fetch('api/employees/calculate', requestOptions); 
     const data = await response.json();
-    this.setState({ loadingCalculate: false,netIncome: data });
+    this.setState({ loadingCalculate: false, netIncome: data });
   }
 
   async getEmployee(id) {
@@ -117,7 +118,7 @@ export class EmployeeCalculate extends Component {
 
     if(response.status === 200){
         const data = await response.json();
-        this.setState({ id: data.id,fullName: data.fullName,birthdate: data.birthdate,tin: data.tin,typeId: data.typeId, loading: false,loadingCalculate: false });
+        this.setState({ id: data.id, fullName: data.fullName, birthdate: data.birthdate, tin: data.tin, employeeTypeId: data.employeeTypeId, employeeType: data.employeeType, loading: false,loadingCalculate: false });
     }
     else{
         alert("There was an error occured.");

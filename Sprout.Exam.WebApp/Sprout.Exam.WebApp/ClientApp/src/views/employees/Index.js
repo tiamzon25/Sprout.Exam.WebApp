@@ -28,18 +28,19 @@ export class EmployeesIndex extends Component {
         <tbody>
           {employees.map(employee =>
             <tr key={employee.id}>
-              <td>{employee.fullName}</td>
-              <td>{employee.birthdate}</td>
-              <td>{employee.tin}</td>
-              <td>{employee.typeId === 1?"Regular":"Contractual"}</td>
-              <td>
-              <button type='button' className='btn btn-info mr-2' onClick={() => parent.props.history.push("/employees/" + employee.id + "/edit")} >Edit</button>
-              <button type='button' className='btn btn-primary mr-2' onClick={() => parent.props.history.push("/employees/" + employee.id + "/calculate")}>Calculate</button>
-            <button type='button' className='btn btn-danger mr-2' onClick={() => {
-              if (window.confirm("Are you sure you want to delete?")) {
-                parent.deleteEmployee(employee.id);
-              } 
-            } }>Delete</button></td>
+                <td>{employee.fullName}</td>
+                <td>{employee.birthdate}</td>
+                  <td>{employee.tin}</td>
+                  <td>{employee.employeeType}</td>
+                <td>
+                    <button type='button' className='btn btn-info mr-2' onClick={() => parent.props.history.push("/employees/" + employee.id + "/edit")} >Edit</button>
+                    <button type='button' className='btn btn-primary mr-2' onClick={() => parent.props.history.push("/employees/" + employee.id + "/calculate")}>Calculate</button>
+                    <button type='button' className='btn btn-danger mr-2' onClick={() => {
+                      if (window.confirm("Are you sure you want to delete?")) {
+                        parent.deleteEmployee(employee.id);
+                      } 
+                      }}>Delete</button>
+                </td>
             </tr>
           )}
         </tbody>

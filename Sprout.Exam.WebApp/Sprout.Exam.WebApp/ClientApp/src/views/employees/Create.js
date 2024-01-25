@@ -74,14 +74,14 @@ export class EmployeeCreate extends Component {
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
         body: JSON.stringify(this.state)
     };
-    const response = await fetch('api/employees',requestOptions);
-
+      const response = await fetch('api/employees', requestOptions);
+      
     if(response.status === 201){
         this.setState({ loadingSave: false });
         alert("Employee successfully saved");
         this.props.history.push("/employees/index");
     }
-    else{
+    else {
         alert("There was an error occured.");
     }
   }

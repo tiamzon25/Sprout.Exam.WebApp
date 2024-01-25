@@ -74,17 +74,26 @@ export class EmployeeEdit extends Component {
         method: 'PUT',
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
         body: JSON.stringify(this.state)
-    };
-    const response = await fetch('api/employees/' + this.state.id,requestOptions);
+      };
 
-    if(response.status === 200){
-        this.setState({ loadingSave: false });
-        alert("Employee successfully saved");
-        this.props.history.push("/employees/index");
-    }
-    else{
-        alert("There was an error occured.");
-    }
+      try {
+          const response = await fetch('api/employees/' + this.state.id, requestOptions);
+          if (response.status === 200) {
+              this.setState({ loadingSave: false });
+              alert("Employee successfully saved");
+              this.props.history.push("/employees/index");
+          }
+          else {
+              alert("There was an error occured.");
+          }
+      }
+      catch
+      {
+          alert("There was an error occured.");
+      }
+    
+
+    
   }
 
   async getEmployee(id) {

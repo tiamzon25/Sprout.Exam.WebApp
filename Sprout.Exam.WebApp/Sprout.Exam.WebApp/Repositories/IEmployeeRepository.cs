@@ -7,6 +7,8 @@ namespace Sprout.Exam.WebApp.Repositories
     public interface IEmployeeRepository
     {
         Task<List<Employee>> ListEmployeesAsync();
-        Task<bool> CreateEmployeeAsync(Employee request);
+        Task<Employee> GetEmployeeAsync(int id);
+        Task<Common.Models.CrudResult<Employee>> UpsertEmployeeAsync(EmployeeModel request);
+        Task<Common.Models.CrudResult<Employee>> GetEmployeeDeleteAsync(int id);
     }
 }

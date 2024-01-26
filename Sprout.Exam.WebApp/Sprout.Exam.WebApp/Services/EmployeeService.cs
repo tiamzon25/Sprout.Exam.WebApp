@@ -2,6 +2,8 @@
 using AutoMapper;
 using Microsoft.Extensions.Logging;
 using Sprout.Exam.Business.Calculations;
+using Sprout.Exam.Business.DataTransferObjects;
+using Sprout.Exam.Business.Validations;
 using Sprout.Exam.Common.Enums;
 using Sprout.Exam.Common.Models;
 using Sprout.Exam.WebApp.Models;
@@ -30,35 +32,28 @@ namespace Sprout.Exam.WebApp.Services
         {
             try
             {
+                var birthDate = DateTime.Parse(request.Birthdate);
+                var validate = await Task.FromResult(Validations.Validate(request.FullName, request.Tin, birthDate));
+
+                if (validate is not null)
+                {
+                    return new CrudResult<EmployeeModel> { Entity = null, Count = 0, Message = validate };
+                }
+
                 var result = await _repository.UpsertEmployeeAsync(request);
 
                 if (result.Count == 0)
                 {
-                    return new CrudResult<EmployeeModel> { Entity = null, Count = 0 };
+                    return new CrudResult<EmployeeModel> { Entity = null, Count = 0, Message = "Error on Saving Or No Changes Made" };
                 }
-                var employeeModel = _mapper.Map<EmployeeModel>(result);
+                var employeeModel = _mapper.Map<EmployeeModel>(result.Entity);
 
-
-
-
-                //(EmployeeType)employee.EmployeeType;
-
-                //if (returnValue.Count > 0)
-                //{
-                //    result.Success = true;
-                //    result.Message = "Successfully Created";
-                //}
-                //else
-                //{
-                //    result.Success = false;
-                //}
-
-                return new CrudResult<EmployeeModel> { Count = result.Count, Entity = employeeModel };
+                return new CrudResult<EmployeeModel> { Count = result.Count, Entity = employeeModel, Message = "Employee successfully saved" };
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return new CrudResult<EmployeeModel> { Entity = null, Count = 0 };
+                return new CrudResult<EmployeeModel> { Entity = null, Count = 0, Message = e.Message };
             }
 
         }
@@ -95,37 +90,64 @@ namespace Sprout.Exam.WebApp.Services
         {
             try
             {
+
                 var result = await _repository.GetEmployeeDeleteAsync(id);
 
                 if (result.Count == 0)
                 {
-                    return new CrudResult<EmployeeModel> { Entity = null, Count = 0 };
+                    return new CrudResult<EmployeeModel> { Entity = null, Count = 0, Message = "Error on Saving Changes" };
 
                 }
 
-                var employeeModel = _mapper.Map<EmployeeModel>(result);
-                return new CrudResult<EmployeeModel> { Count = result.Count, Entity = employeeModel };
+                var employeeModel = _mapper.Map<EmployeeModel>(result.Entity);
+                return new CrudResult<EmployeeModel> { Count = result.Count, Entity = employeeModel, Message = "Employee successfully Deleted" };
 
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message);
-                return new CrudResult<EmployeeModel> { Entity = null, Count = 0 };
+                return new CrudResult<EmployeeModel> { Entity = null, Count = 0, Message = e.Message };
             }
         }
 
-        public async Task<Decimal> GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
+        public async Task<SalaryResults> GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
         {
             try
             {
+                if ((request.EmployeeTypeId == 2 || request.EmployeeTypeId == 4) && (request.InputDays > 31 || request.InputDays < 1))
+                {
 
-                var salary = SalaryCalculation.ComputeSalary((EmployeeType)request.EmployeeTypeId, request.workedDays, request.AbsentDays);
+                    return new SalaryResults
+                    {
+                        Message = "Message Invalid Work Days",
+                        Salary = 0.00m
+                    };
+                }
+                else if ((request.EmployeeTypeId == 1 || request.EmployeeTypeId == 3) && (request.InputDays > 31 || request.InputDays < 0))
+                {
+                    return new SalaryResults
+                    {
+                        Message = "Message Invalid Absent Days",
+                        Salary = 0.00m
+                    };
+                }
 
-                return salary;
+                var salary = await Task.FromResult(SalaryCalculation.ComputeSalary((EmployeeType)request.EmployeeTypeId, request.InputDays));
+
+                return new SalaryResults
+                {
+                    Message = null,
+                    Salary = salary
+                };
             }
-            catch
+            catch (Exception e)
             {
-                return 0.00m;
+                _logger.LogError(e.Message);
+                return new SalaryResults
+                {
+                    Message = e.Message,
+                    Salary = 0.00m
+                };
             }
         }
     }

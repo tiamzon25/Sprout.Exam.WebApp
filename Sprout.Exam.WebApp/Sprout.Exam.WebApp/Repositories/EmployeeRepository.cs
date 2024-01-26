@@ -56,7 +56,7 @@ namespace Sprout.Exam.WebApp.Repositories
                 {
                     await _context.Employee.AddAsync(new Models.Employee
                     {
-                        Birthdate = request.Birthdate,
+                        Birthdate = DateTime.Parse(request.Birthdate),//request.Birthdate,
                         EmployeeTypeId = request.EmployeeTypeId,
                         FullName = request.FullName,
                         IsDeleted = request.IsDeleted,
@@ -66,7 +66,7 @@ namespace Sprout.Exam.WebApp.Repositories
                 else
                 {
                     getEmployee.FullName = request.FullName;
-                    getEmployee.Birthdate = request.Birthdate;
+                    getEmployee.Birthdate = DateTime.Parse(request.Birthdate);
                     getEmployee.EmployeeTypeId = request.EmployeeTypeId;
                     getEmployee.Tin = request.Tin;
                     getEmployee.IsDeleted = request.IsDeleted;

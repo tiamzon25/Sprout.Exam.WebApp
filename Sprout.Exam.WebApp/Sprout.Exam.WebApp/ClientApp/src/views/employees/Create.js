@@ -18,8 +18,32 @@ export class EmployeeCreate extends Component {
 
   handleSubmit(e){
       e.preventDefault();
+
+      const input = this.state;
+      const birthdate = input.birthdate;
+      const fullName = input.fullName;
+      const tin = input.tin;
+
+      if (fullName === "") {
+          alert("Please Input Fullname");
+          this.setState({ loadingSave: false });
+          return;
+      }
+      else if (tin === "") {
+          alert("Please Input Tin");
+
+          this.setState({ loadingSave: false });
+          return;
+      }
+      else if (isNaN(new Date(birthdate))) {
+          alert("Please Input Tin");
+
+          this.setState({ loadingSave: false });
+          return;
+      }
+
       if (window.confirm("Are you sure you want to save?")) {
-        this.saveEmployee();
+              this.saveEmployee();
       } 
   }
 
@@ -32,7 +56,7 @@ export class EmployeeCreate extends Component {
 <div className='form-row'>
 <div className='form-group col-md-6'>
   <label htmlFor='inputFullName4'>Full Name: *</label>
-  <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' />
+    <input type='text' className='form-control' id='inputFullName4' onChange={this.handleChange.bind(this)} name="fullName" value={this.state.fullName} placeholder='Full Name' required="true" />
 </div>
 <div className='form-group col-md-6'>
   <label htmlFor='inputBirthdate4'>Birthdate: *</label>
@@ -42,13 +66,15 @@ export class EmployeeCreate extends Component {
 <div className="form-row">
 <div className='form-group col-md-6'>
   <label htmlFor='inputTin4'>TIN: *</label>
-  <input type='text' className='form-control' id='inputTin4' onChange={this.handleChange.bind(this)} value={this.state.tin} name="tin" placeholder='TIN' />
+    <input type='text' className='form-control' id='inputTin4' onChange={this.handleChange.bind(this)} value={this.state.tin} name="tin" placeholder='TIN' required="true" />
 </div>
 <div className='form-group col-md-6'>
   <label htmlFor='inputEmployeeType4'>Employee Type: *</label>
   <select id='inputEmployeeType4' onChange={this.handleChange.bind(this)} value={this.state.typeId}  name="typeId" className='form-control'>
     <option value='1'>Regular</option>
     <option value='2'>Contractual</option>
+    <option value='3'>Probationary</option>
+    <option value='4'>PartTime</option>
   </select>
 </div>
 </div>
@@ -67,23 +93,47 @@ export class EmployeeCreate extends Component {
   }
 
   async saveEmployee() {
-    this.setState({ loadingSave: true });
+      this.setState({ loadingSave: true });
+
     const token = await authService.getAccessToken();
     const requestOptions = {
         method: 'POST',
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`,'Content-Type': 'application/json' },
         body: JSON.stringify(this.state)
-    };
-      const response = await fetch('api/employees', requestOptions);
-      
-    if(response.status === 201){
-        this.setState({ loadingSave: false });
-        alert("Employee successfully saved");
-        this.props.history.push("/employees/index");
+      };
+      try {
+          const response = await fetch('api/employees', requestOptions);
+          const data = await response.json();
+          if (response.status === 200 && data.message === null) {
+              this.setState({ loadingSave: false });
+              alert("Employee successfully saved");
+              this.props.history.push("/employees/index");
+          }
+          else {
+              this.setState({ loadingSave: false });
+              alert(data.message);
+          }
+      }
+      catch(e)
+      {
+          alert(e);
+      }
+    
     }
-    else {
-        alert("There was an error occured.");
+    async validateForm() { 
+        const input = this.state;
+        const birthdate = input.birthdate;
+        const fullName = input.fullName;
+        const tin = input.tin;
+
+        if (fullName === "") {
+            alert("Please Input Fullname");
+            return ;
+        }
+        else if (tin === "") {
+            alert("Please Input Tin");
+            return false;
+        }
     }
-  }
 
 }

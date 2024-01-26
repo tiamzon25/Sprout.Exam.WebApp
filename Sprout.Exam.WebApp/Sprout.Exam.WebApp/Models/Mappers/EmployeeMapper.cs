@@ -10,7 +10,7 @@ namespace Sprout.Exam.WebApp.Models.Mapper
             CreateMap<Employee, EmployeeModel>()
                        .ForMember(d => d.Id, o => o.MapFrom(s => s.Id))
                        .ForMember(d => d.FullName, o => o.MapFrom(s => s.FullName))
-                       .ForMember(d => d.Birthdate, o => o.MapFrom(s => s.Birthdate))
+                       .ForMember(d => d.Birthdate, o => o.MapFrom(s => s.Birthdate.ToString("yyyy-MM-dd")))
                        .ForMember(d => d.EmployeeTypeId, o => o.MapFrom(s => s.EmployeeTypeId))
                        .ForMember(d => d.Tin, o => o.MapFrom(s => s.Tin))
                        .ForMember(d => d.EmployeeType, o => o.MapFrom(s => ((EmployeeType)s.EmployeeTypeId).ToString()))

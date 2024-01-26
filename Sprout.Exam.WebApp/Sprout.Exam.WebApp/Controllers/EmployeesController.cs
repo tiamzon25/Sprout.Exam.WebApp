@@ -2,10 +2,8 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Sprout.Exam.Business.DataTransferObjects;
-using Sprout.Exam.Common.Enums;
 using Sprout.Exam.WebApp.Models;
 using Sprout.Exam.WebApp.Services;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Sprout.Exam.WebApp.Controllers
@@ -72,7 +70,7 @@ namespace Sprout.Exam.WebApp.Controllers
             var inputEmployee = new EmployeeModel
             {
                 Id = input.Id,
-                Birthdate = input.Birthdate,
+                Birthdate = input.Birthdate.ToString("yyyy-MM-dd"),
                 EmployeeTypeId = input.TypeId,
                 FullName = input.FullName,
                 Tin = input.Tin,
@@ -81,12 +79,7 @@ namespace Sprout.Exam.WebApp.Controllers
 
             var result = await _service.UpsertEmployeeAsync(inputEmployee);
 
-            if (result.Count == 0)
-            {
-                return NotFound();
-            }
-
-            return Ok(result.Entity);
+            return Ok(result);
         }
 
         /// <summary>
@@ -98,7 +91,7 @@ namespace Sprout.Exam.WebApp.Controllers
         {
             var inputEmployee = new EmployeeModel
             {
-                Birthdate = input.Birthdate,
+                Birthdate = input.Birthdate.ToString("yyyy-MM-dd"),
                 EmployeeTypeId = input.TypeId,
                 FullName = input.FullName,
                 Tin = input.Tin,
@@ -107,11 +100,6 @@ namespace Sprout.Exam.WebApp.Controllers
 
             var result = await _service.UpsertEmployeeAsync(inputEmployee);
 
-
-            if (result.Count == 0)
-            {
-                return BadRequest();
-            }
             return Ok(result);
         }
 
@@ -124,11 +112,6 @@ namespace Sprout.Exam.WebApp.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var result = await _service.GetEmployeeDeleteAsync(id);
-
-            if (result.Count == 0)
-            {
-                return NotFound();
-            }
 
             return Ok(result.Entity.Id);
         }
@@ -146,32 +129,17 @@ namespace Sprout.Exam.WebApp.Controllers
         [HttpPost("calculate")]
         public async Task<IActionResult> Calculate(CalculateSalary input)
         {
-
             var salary = await _service.GetCalculateEmployeeSalaryAsync(
                 new CalculateSalaryModel
                 {
-                    AbsentDays = input.AbsentDays,
+                    InputDays = input.InputDays,
                     EmployeeTypeId = input.EmployeeTypeId,
                     Id = input.Id,
-                    workedDays = input.workedDays
 
                 }
-                ); ;
-            var result = await Task.FromResult(StaticEmployees.ResultList.FirstOrDefault(m => m.Id == input.Id));
+                );
 
-            if (result == null) return NotFound();
-            var type = (EmployeeType)result.TypeId;
-            return type switch
-            {
-                EmployeeType.Regular =>
-                    //create computation for regular.
-                    Ok(25000),
-                EmployeeType.Contractual =>
-                    //create computation for contractual.
-                    Ok(20000),
-                _ => NotFound("Employee Type not found")
-            };
-
+            return Ok(salary);
         }
 
     }

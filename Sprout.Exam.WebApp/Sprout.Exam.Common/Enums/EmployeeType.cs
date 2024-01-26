@@ -4,5 +4,8 @@
     {
         Regular = 1,
         Contractual = 2,
+        Probationary = 3,
+        PartTime = 4,
+        None,
     }
 }

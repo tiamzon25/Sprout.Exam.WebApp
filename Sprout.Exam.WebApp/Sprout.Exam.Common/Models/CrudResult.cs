@@ -4,6 +4,7 @@
     {
         public int Count { get; set; }
         public T Entity { get; set; }
+        public string Message { get; set; }
     }
 
 }

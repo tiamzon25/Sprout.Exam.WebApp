@@ -6,7 +6,7 @@ export class EmployeeCalculate extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { id: 0,fullName: '',birthdate: '',tin: '',typeId: 1,absentDays: 0,workedDays: 0,netIncome: 0, loading: true,loadingCalculate:false };
+      this.state = { id: 0, fullName: '', birthdate: '', tin: '', typeId: 1, absentDays: 0, workedDays: 0, netIncome: 0, loading: true, loadingCalculate: false };
   }
 
   componentDidMount() {
@@ -52,26 +52,15 @@ export class EmployeeCalculate extends Component {
 </div>
 </div>
 
-{this.state.employeeTypeId === 1 ?
- <div className="form-row">
-     <div className='form-group col-md-12'><label>Salary: 20000 </label></div>
-     <div className='form-group col-md-12'><label>Tax: 12% </label></div>
-</div> : <div className="form-row">
-<div className='form-group col-md-12'><label>Rate Per Day: 500 </label></div>
-</div> }
-
-<div className="form-row">
-
-    {this.state.employeeTypeId === 1? 
-<div className='form-group col-md-6'>
-  <label htmlFor='inputAbsentDays4'>Absent Days: </label>
-  <input type='text' className='form-control' id='inputAbsentDays4' onChange={this.handleChange.bind(this)} value={this.state.absentDays} name="absentDays" placeholder='Absent Days' />
-</div> :
-<div className='form-group col-md-6'>
-  <label htmlFor='inputWorkDays4'>Worked Days: </label>
-  <input type='text' className='form-control' id='inputWorkDays4' onChange={this.handleChange.bind(this)} value={this.state.workedDays} name="workedDays" placeholder='Worked Days' />
+                <div className="form-row" id="salaryDetails">
+                    <div className='form-group col-md-12'><label>{this.state.salary}</label></div>
+                    <div className='form-group col-md-12' hidden={this.state.isTaxHidden}><label>{this.state.tax}</label></div>                          
 </div>
-}
+<div className="form-row">
+                    <div className='form-group col-md-6'>
+                        <label htmlFor='inputAbsentDays4'>{this.state.inputDaysLabel} </label>
+                        <input type='text' className='form-control' id="inputDays" onChange={this.handleChange.bind(this)} value={this.state.inputDays} name="inputDays" placeholder={this.state.inputDaysPlace} required/>
+                    </div>
 </div>
 
 <div className="form-row">
@@ -101,12 +90,17 @@ export class EmployeeCalculate extends Component {
     const requestOptions = {
         method: 'POST',
         headers: !token ? {} : { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id: this.state.id, absentDays: this.state.absentDays, workedDays: this.state.workedDays, employeeTypeId: this.state.employeeTypeId })
-    };
-      //const response = await fetch('api/employees/' + this.state.id + '/calculate', requestOptions);
+        body: JSON.stringify({ id: this.state.id, inputDays: this.state.inputDays, employeeTypeId: this.state.employeeTypeId })
+    }; 
       const response = await fetch('api/employees/calculate', requestOptions); 
-    const data = await response.json();
-    this.setState({ loadingCalculate: false, netIncome: data });
+      const data = await response.json();
+      if (response.status === 200 && data.message != null) {
+          alert(data.message);
+      }
+      else if (response.status !== 200) {
+          alert("There was an error occured.")
+      }
+    this.setState({ loadingCalculate: false, netIncome: data.salary });
   }
 
   async getEmployee(id) {
@@ -116,13 +110,31 @@ export class EmployeeCalculate extends Component {
       headers: !token ? {} : { 'Authorization': `Bearer ${token}` }
     });
 
-    if(response.status === 200){
-        const data = await response.json();
+    const data = await response.json()
+    if(response.status === 200){;
         this.setState({ id: data.id, fullName: data.fullName, birthdate: data.birthdate, tin: data.tin, employeeTypeId: data.employeeTypeId, employeeType: data.employeeType, loading: false,loadingCalculate: false });
     }
     else{
         alert("There was an error occured.");
         this.setState({ loading: false,loadingCalculate: false });
-    }
+      }
+       
+      if (data.employeeTypeId === 1) {
+          this.setState({ tax: "Tax: 12%", salary: "Salary: 20000", inputDaysLabel: "Absent Days:", inputDaysId: "inputAbsentDays4", inputDaysName: "absentDays", inputDaysPlace: "Absent Days", inputDays: "", isTaxHidden: false });
+          
+      }
+      else if (data.employeeTypeId === 2) {
+
+          this.setState({ tax: "", salary: "Rate Per Day: 500", inputDaysLabel: "Worked Days: ", inputDaysId: "inputAbsentDays4", inputDaysName: "workedDays", inputDaysPlace: "Worked Days", inputDays: "", isTaxHidden: true });
+      } 
+      if (data.employeeTypeId === 3) {
+          this.setState({ tax: "Tax: 12%", salary: "Salary: 16000", inputDaysLabel: "Absent Days:", inputDaysId: "inputAbsentDays4", inputDaysName: "absentDays", inputDaysPlace: "Absent Days", inputDays: "", isTaxHidden: false });
+
+      }
+      else if (data.employeeTypeId === 4) {
+
+          this.setState({ tax: "", salary: "Rate Per Day: 400", inputDaysLabel: "Worked Days: ", inputDaysId: "inputAbsentDays4", inputDaysName: "workedDays", inputDaysPlace: "Worked Days", inputDays: "", isTaxHidden: true });
+      } 
+      
   }
 }

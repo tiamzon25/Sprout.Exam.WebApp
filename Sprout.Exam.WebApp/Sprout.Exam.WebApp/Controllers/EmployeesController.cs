@@ -127,9 +127,9 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <returns></returns>
         //[HttpPost("{id}/calculate")]
         [HttpPost("calculate")]
-        public async Task<IActionResult> Calculate(CalculateSalary input)
+        public  IActionResult Calculate(CalculateSalary input)
         {
-            var salary = await _service.GetCalculateEmployeeSalaryAsync(
+            var salary =  _service.GetCalculateEmployeeSalaryAsync(
                 new CalculateSalaryModel
                 {
                     InputDays = input.InputDays,

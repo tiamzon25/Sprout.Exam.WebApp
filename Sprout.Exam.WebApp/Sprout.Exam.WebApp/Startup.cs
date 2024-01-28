@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Sprout.Exam.Business.Calculations;
 using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
 using Sprout.Exam.WebApp.Models.Mapper;
@@ -52,9 +53,10 @@ namespace Sprout.Exam.WebApp
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-
+            
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
             services.AddScoped<EmployeeService>();
+            services.AddSingleton<ISalaryCalculation, SalaryCalculation>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

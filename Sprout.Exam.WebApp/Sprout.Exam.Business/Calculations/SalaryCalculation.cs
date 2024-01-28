@@ -3,32 +3,25 @@ using System;
 
 namespace Sprout.Exam.Business.Calculations
 {
-    public static class SalaryCalculation
+    public  class SalaryCalculation: ISalaryCalculation
     {
-        public static Decimal ComputeSalary(EmployeeType employeeType, Decimal inputDays)
+        public decimal ComputeSalary(EmployeeType employeeType, decimal inputDays)
         {
-            var salary = 0.0m;
+            // var salary = 0.0m;
 
-            switch (employeeType)
+            var salary = employeeType switch
             {
-                case EmployeeType.Regular:
-                    salary = RegularEmployeeComputation(inputDays);
-                    break;
-                case EmployeeType.Contractual:
-                    salary = ContractualEmployeeComputation(inputDays);
-                    break;
-                case EmployeeType.Probationary:
-                    salary = ProbationaryEmployeeComputation(inputDays);
-                    break;
-                case EmployeeType.PartTime:
-                    salary = PartTimeEmployeeComputation(inputDays);
-                    break;
-                default: return salary;
-            }
+                EmployeeType.Regular => RegularEmployeeComputation(inputDays),
+                EmployeeType.Contractual => ContractualEmployeeComputation(inputDays),
+                EmployeeType.Probationary => ProbationaryEmployeeComputation(inputDays),
+                EmployeeType.PartTime => PartTimeEmployeeComputation(inputDays),
+                _ => 0m
+
+            };
 
             return Math.Round(salary, 2);
         }
-        public static Decimal RegularEmployeeComputation(decimal inputDays)
+        private  decimal RegularEmployeeComputation(decimal inputDays)
         {
             var baseSalary = 20000.00m;
             var baseDailySalary = (baseSalary / 22) * inputDays;
@@ -43,7 +36,7 @@ namespace Sprout.Exam.Business.Calculations
             return (baseSalary - baseDailySalary - taxBasePay);
 
         }
-        public static Decimal ProbationaryEmployeeComputation(decimal inputDays)
+        private  decimal ProbationaryEmployeeComputation(decimal inputDays)
         {
             var baseSalary = 16000.00m;
             var baseDailySalary = (baseSalary / 22) * inputDays;
@@ -58,14 +51,14 @@ namespace Sprout.Exam.Business.Calculations
             return (baseSalary - baseDailySalary - taxBasePay);
 
         }
-        public static Decimal ContractualEmployeeComputation(decimal inputDays)
+        private  decimal ContractualEmployeeComputation(decimal inputDays)
         {
             var rate = 500.00m;
 
             return (rate * inputDays);
 
         }
-        public static Decimal PartTimeEmployeeComputation(decimal inputDays)
+        private  decimal PartTimeEmployeeComputation(decimal inputDays)
         {
             var rate = 400.00m;
 

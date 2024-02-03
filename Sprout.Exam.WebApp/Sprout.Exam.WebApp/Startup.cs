@@ -8,8 +8,12 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sprout.Exam.Business.Calculations;
+using Sprout.Exam.Business.Validations;
 using Sprout.Exam.DataAccess.Data;
+using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Models.Mapper;
+using Sprout.Exam.WebApp.Repositories;
+using Sprout.Exam.WebApp.Services;
 //using Sprout.Exam.WebApp.Repositories;
 //using Sprout.Exam.WebApp.Services;
 
@@ -41,23 +45,11 @@ namespace Sprout.Exam.WebApp
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<Sprout.Exam.DataAccess.Models.ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
                 .AddEntityFrameworkStores<SproutDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<Sprout.Exam.DataAccess.Models.ApplicationUser, SproutDbContext>();
-
-            //services.AddDbContext<ApplicationDbContext>(options =>
-            //    options.UseSqlServer(
-            //        Configuration.GetConnectionString("DefaultConnection")));
-
-            //services.AddDatabaseDeveloperPageExceptionFilter();
-
-            //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-            //    .AddEntityFrameworkStores<ApplicationDbContext>();
-
-            //services.AddIdentityServer()
-            //    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<ApplicationUser, SproutDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
@@ -65,9 +57,10 @@ namespace Sprout.Exam.WebApp
             services.AddControllersWithViews();
             services.AddRazorPages();
 
-            //services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            //services.AddScoped<EmployeeService>();
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            services.AddScoped<EmployeeService>();
             services.AddSingleton<ISalaryCalculation, SalaryCalculation>();
+            services.AddSingleton<IValidations, Validations>();
 
             // In production, the React files will be served from this directory
             services.AddSpaStaticFiles(configuration =>

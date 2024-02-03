@@ -22,13 +22,15 @@ namespace Sprout.Exam.WebApp.Services
         private readonly IEmployeeRepository _repository;
         private readonly IMapper _mapper;
         private readonly ISalaryCalculation _salaryCalculation;
+        private readonly IValidations _validations;
         public EmployeeService(ILogger<EmployeeService> logger,
-       IEmployeeRepository repository, IMapper mapper, ISalaryCalculation salaryCalculation)
+       IEmployeeRepository repository, IMapper mapper, ISalaryCalculation salaryCalculation, IValidations validations)
         {
             _logger = logger;
             _repository = repository;
             _mapper = mapper;
             _salaryCalculation = salaryCalculation;
+            _validations = validations;
         }
 
         public async Task<CrudResult<EmployeeModel>> UpsertEmployeeAsync(EmployeeModel request)
@@ -36,7 +38,7 @@ namespace Sprout.Exam.WebApp.Services
             try
             {
                 var birthDate = DateTime.Parse(request.Birthdate);
-                var validate = await Task.FromResult(Validations.Validate(request.FullName, request.Tin, birthDate));
+                var validate = _validations.Validate(request.FullName, request.Tin, birthDate);
 
                 if (validate is not null)
                 {

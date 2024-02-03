@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sprout.Exam.WebApp.Models
+namespace Sprout.Exam.DataAccess.Models
 {
     public class Employee
     {

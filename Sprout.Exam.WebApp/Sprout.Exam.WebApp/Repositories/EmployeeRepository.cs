@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Data;
 using Sprout.Exam.WebApp.Models;
 using System;

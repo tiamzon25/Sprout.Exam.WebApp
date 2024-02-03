@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Sprout.Exam.Common.Enums;
+using Sprout.Exam.DataAccess.Models;
 
 namespace Sprout.Exam.WebApp.Models.Mapper
 {

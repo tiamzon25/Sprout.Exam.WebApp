@@ -8,11 +8,10 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Sprout.Exam.Business.Calculations;
-using Sprout.Exam.WebApp.Data;
-using Sprout.Exam.WebApp.Models;
+using Sprout.Exam.DataAccess.Data;
 using Sprout.Exam.WebApp.Models.Mapper;
-using Sprout.Exam.WebApp.Repositories;
-using Sprout.Exam.WebApp.Services;
+//using Sprout.Exam.WebApp.Repositories;
+//using Sprout.Exam.WebApp.Services;
 
 namespace Sprout.Exam.WebApp
 {
@@ -36,26 +35,38 @@ namespace Sprout.Exam.WebApp
             IMapper mapper = mappingconfig.CreateMapper();
             services.AddSingleton(mapper);
 
-            services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(
-                    Configuration.GetConnectionString("DefaultConnection")));
+            services.AddDbContext<SproutDbContext>(options =>
+            options.UseSqlServer(
+        Configuration.GetConnectionString("DefaultConnection"), x => x.MigrationsAssembly("Sprout.Exam.DataAccess")));
 
             services.AddDatabaseDeveloperPageExceptionFilter();
 
-            services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            services.AddDefaultIdentity<Sprout.Exam.DataAccess.Models.ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<SproutDbContext>();
 
             services.AddIdentityServer()
-                .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
+                .AddApiAuthorization<Sprout.Exam.DataAccess.Models.ApplicationUser, SproutDbContext>();
+
+            //services.AddDbContext<ApplicationDbContext>(options =>
+            //    options.UseSqlServer(
+            //        Configuration.GetConnectionString("DefaultConnection")));
+
+            //services.AddDatabaseDeveloperPageExceptionFilter();
+
+            //services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true)
+            //    .AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //services.AddIdentityServer()
+            //    .AddApiAuthorization<ApplicationUser, ApplicationDbContext>();
 
             services.AddAuthentication()
                 .AddIdentityServerJwt();
 
             services.AddControllersWithViews();
             services.AddRazorPages();
-            
-            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
-            services.AddScoped<EmployeeService>();
+
+            //services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+            //services.AddScoped<EmployeeService>();
             services.AddSingleton<ISalaryCalculation, SalaryCalculation>();
 
             // In production, the React files will be served from this directory

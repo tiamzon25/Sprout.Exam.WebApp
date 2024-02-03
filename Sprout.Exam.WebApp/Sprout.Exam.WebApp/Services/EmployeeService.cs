@@ -6,6 +6,7 @@ using Sprout.Exam.Business.DataTransferObjects;
 using Sprout.Exam.Business.Validations;
 using Sprout.Exam.Common.Enums;
 using Sprout.Exam.Common.Models;
+using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Models;
 using Sprout.Exam.WebApp.Repositories;
 using System;
@@ -112,7 +113,7 @@ namespace Sprout.Exam.WebApp.Services
             }
         }
 
-        public  SalaryResults GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
+        public SalaryResults GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
         {
             try
             {
@@ -135,7 +136,7 @@ namespace Sprout.Exam.WebApp.Services
                 }
 
                 var salary = _salaryCalculation.ComputeSalary((EmployeeType)request.EmployeeTypeId, request.InputDays);
-                
+
                 return new SalaryResults
                 {
                     Message = null,

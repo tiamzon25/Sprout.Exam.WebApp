@@ -18,7 +18,7 @@ namespace Sprout.Exam.WebApp.Controllers
 
 
         public EmployeesController(EmployeeService service,
-       ILogger<EmployeesController> logger)
+        ILogger<EmployeesController> logger)
         {
             _service = service;
             _logger = logger;
@@ -127,9 +127,9 @@ namespace Sprout.Exam.WebApp.Controllers
         /// <returns></returns>
         //[HttpPost("{id}/calculate")]
         [HttpPost("calculate")]
-        public  IActionResult Calculate(CalculateSalary input)
+        public IActionResult Calculate(CalculateSalary input)
         {
-            var salary =  _service.GetCalculateEmployeeSalaryAsync(
+            var salary = _service.GetCalculateEmployeeSalaryAsync(
                 new CalculateSalaryModel
                 {
                     InputDays = input.InputDays,

@@ -1,7 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace Sprout.Exam.WebApp.Data.Migrations
+namespace Sprout.Exam.DataAccess.Data.Migrations
 {
     public partial class CreateIdentitySchema : Migration
     {
@@ -63,6 +63,23 @@ namespace Sprout.Exam.WebApp.Data.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_DeviceCodes", x => x.UserCode);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Employee",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Birthdate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    Tin = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    EmployeeTypeId = table.Column<int>(type: "int", nullable: false),
+                    IsDeleted = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Employee", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -276,6 +293,9 @@ namespace Sprout.Exam.WebApp.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "DeviceCodes");
+
+            migrationBuilder.DropTable(
+                name: "Employee");
 
             migrationBuilder.DropTable(
                 name: "PersistedGrants");

@@ -2,9 +2,9 @@
 
 namespace Sprout.Exam.Business.Validations
 {
-    public static class Validations
+    public class Validations : IValidations
     {
-        public static string Validate(string fullName, string Tin, DateTime birthDate)
+        public string Validate(string fullName, string Tin, DateTime birthDate)
         {
             var age = GetAgeAsync(birthDate);
             if (fullName.Length < 1)
@@ -24,7 +24,7 @@ namespace Sprout.Exam.Business.Validations
                 return null;
             }
         }
-        private static int GetAgeAsync(DateTime birtDate)
+        private int GetAgeAsync(DateTime birtDate)
         {
             var today = DateTime.Today;
 

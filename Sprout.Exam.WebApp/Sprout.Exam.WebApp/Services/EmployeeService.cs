@@ -6,6 +6,7 @@ using Sprout.Exam.Business.DataTransferObjects;
 using Sprout.Exam.Business.Validations;
 using Sprout.Exam.Common.Enums;
 using Sprout.Exam.Common.Models;
+using Sprout.Exam.DataAccess.Models;
 using Sprout.Exam.WebApp.Models;
 using Sprout.Exam.WebApp.Repositories;
 using System;
@@ -21,13 +22,15 @@ namespace Sprout.Exam.WebApp.Services
         private readonly IEmployeeRepository _repository;
         private readonly IMapper _mapper;
         private readonly ISalaryCalculation _salaryCalculation;
+        private readonly IValidations _validations;
         public EmployeeService(ILogger<EmployeeService> logger,
-       IEmployeeRepository repository, IMapper mapper, ISalaryCalculation salaryCalculation)
+       IEmployeeRepository repository, IMapper mapper, ISalaryCalculation salaryCalculation, IValidations validations)
         {
             _logger = logger;
             _repository = repository;
             _mapper = mapper;
             _salaryCalculation = salaryCalculation;
+            _validations = validations;
         }
 
         public async Task<CrudResult<EmployeeModel>> UpsertEmployeeAsync(EmployeeModel request)
@@ -35,7 +38,7 @@ namespace Sprout.Exam.WebApp.Services
             try
             {
                 var birthDate = DateTime.Parse(request.Birthdate);
-                var validate = await Task.FromResult(Validations.Validate(request.FullName, request.Tin, birthDate));
+                var validate = _validations.Validate(request.FullName, request.Tin, birthDate);
 
                 if (validate is not null)
                 {
@@ -112,7 +115,7 @@ namespace Sprout.Exam.WebApp.Services
             }
         }
 
-        public  SalaryResults GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
+        public SalaryResults GetCalculateEmployeeSalaryAsync(CalculateSalaryModel request)
         {
             try
             {
@@ -135,7 +138,7 @@ namespace Sprout.Exam.WebApp.Services
                 }
 
                 var salary = _salaryCalculation.ComputeSalary((EmployeeType)request.EmployeeTypeId, request.InputDays);
-                
+
                 return new SalaryResults
                 {
                     Message = null,

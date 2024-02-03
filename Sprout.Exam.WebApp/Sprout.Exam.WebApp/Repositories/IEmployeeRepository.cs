@@ -1,4 +1,5 @@
-﻿using Sprout.Exam.WebApp.Models;
+﻿using Sprout.Exam.DataAccess.Models;
+using Sprout.Exam.WebApp.Models;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 

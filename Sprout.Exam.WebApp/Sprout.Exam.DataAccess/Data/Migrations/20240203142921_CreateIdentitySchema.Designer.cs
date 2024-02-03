@@ -3,15 +3,17 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using Sprout.Exam.WebApp.Data;
+using Sprout.Exam.DataAccess.Data;
 
-namespace Sprout.Exam.WebApp.Data.Migrations
+namespace Sprout.Exam.DataAccess.Data.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [DbContext(typeof(SproutDbContext))]
+    [Migration("20240203142921_CreateIdentitySchema")]
+    partial class CreateIdentitySchema
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -257,7 +259,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("Sprout.Exam.WebApp.Models.ApplicationUser", b =>
+            modelBuilder.Entity("Sprout.Exam.DataAccess.Models.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .HasColumnType("nvarchar(450)");
@@ -322,7 +324,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("Sprout.Exam.WebApp.Models.Employee", b =>
+            modelBuilder.Entity("Sprout.Exam.DataAccess.Models.Employee", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -360,7 +362,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("Sprout.Exam.WebApp.Models.ApplicationUser", null)
+                    b.HasOne("Sprout.Exam.DataAccess.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -369,7 +371,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("Sprout.Exam.WebApp.Models.ApplicationUser", null)
+                    b.HasOne("Sprout.Exam.DataAccess.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -384,7 +386,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Sprout.Exam.WebApp.Models.ApplicationUser", null)
+                    b.HasOne("Sprout.Exam.DataAccess.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -393,7 +395,7 @@ namespace Sprout.Exam.WebApp.Data.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("Sprout.Exam.WebApp.Models.ApplicationUser", null)
+                    b.HasOne("Sprout.Exam.DataAccess.Models.ApplicationUser", null)
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)

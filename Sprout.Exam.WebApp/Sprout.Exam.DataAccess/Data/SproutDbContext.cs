@@ -2,13 +2,13 @@
 using Microsoft.AspNetCore.ApiAuthorization.IdentityServer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using Sprout.Exam.WebApp.Models;
+using Sprout.Exam.DataAccess.Models;
 
-namespace Sprout.Exam.WebApp.Data
+namespace Sprout.Exam.DataAccess.Data
 {
-    public class ApplicationDbContext : ApiAuthorizationDbContext<ApplicationUser>
+    public class SproutDbContext : ApiAuthorizationDbContext<Models.ApplicationUser>
     {
-        public ApplicationDbContext(
+        public SproutDbContext(
             DbContextOptions options,
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
